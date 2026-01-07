@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Email Sender</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; background: #f4f4f4; padding: 50px; }
+        .box { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 350px; }
+        input, textarea { width: 100%; margin: 10px 0; padding: 10px; box-sizing: border-box; border: 1px solid #ddd; }
+        button { width: 100%; padding: 10px; background: #0070f3; color: white; border: none; cursor: pointer; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h3>Kirim Email</h3>
+        <input type="email" id="to" placeholder="Email Tujuan">
+        <input type="text" id="sub" placeholder="Subjek">
+        <textarea id="msg" placeholder="Pesan"></textarea>
+        <button onclick="kirim()">Kirim Sekarang</button>
+        <p id="info"></p>
+    </div>
+
+    <script>
+        async function kirim() {
+            const info = document.getElementById('info');
+            info.innerText = "Sedang mengirim...";
+            
+            const res = await fetch('/api/manual', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: document.getElementById('to').value,
+                    subject: document.getElementById('sub').value,
+                    message: document.getElementById('msg').value
+                })
+            });
+
+            if(res.ok) {
+                info.innerText = "✅ Email Berhasil Terkirim!";
+            } else {
+                info.innerText = "❌ Gagal Mengirim.";
+            }
+        }
+    </script>
+</body>
+</html>
