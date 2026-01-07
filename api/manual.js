@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     <div style="background-color: #f4f7f6; padding: 50px 20px; font-family: sans-serif;">
         <div style="max-width: 560px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e0e0e0;">
             <div style="background-color: #22c55e; padding: 25px; text-align: center;">
-                <h2 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 600; letter-spacing: 0.5px;">Notification</h2>
+                <h2 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 600; letter-spacing: 0.5px;">Pesan Baru</h2>
             </div>
             <div style="padding: 40px;">
                 <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin: 0;">
