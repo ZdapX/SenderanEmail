@@ -1,43 +1,89 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Email Sender</title>
     <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; background: #f4f4f4; padding: 50px; }
-        .box { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 350px; }
-        input, textarea { width: 100%; margin: 10px 0; padding: 10px; box-sizing: border-box; border: 1px solid #ddd; }
-        button { width: 100%; padding: 10px; background: #0070f3; color: white; border: none; cursor: pointer; border-radius: 5px; }
+        :root { --primary: #22c55e; --bg: #f8fafc; --text: #1e293b; }
+        * { box-sizing: border-box; transition: all 0.2s ease; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        
+        .container { background: #ffffff; width: 100%; max-width: 420px; padding: 40px; border-radius: 24px; box-shadow: 0 4px 25px rgba(0,0,0,0.03); }
+        h1 { font-size: 24px; font-weight: 700; margin-bottom: 30px; letter-spacing: -0.5px; color: #000; }
+        
+        .group { margin-bottom: 20px; }
+        label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; margin-bottom: 8px; }
+        
+        input, textarea { width: 100%; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 12px 16px; font-size: 15px; background: #fcfcfc; outline: none; }
+        input:focus, textarea:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1); }
+        
+        button { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        button:hover { background: #19a34a; transform: translateY(-1px); }
+        button:active { transform: translateY(0); }
+        button:disabled { background: #cbd5e1; cursor: not-allowed; }
+
+        #status { text-align: center; margin-top: 20px; font-size: 14px; min-height: 20px; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h3>Kirim Email</h3>
-        <input type="email" id="to" placeholder="Email Tujuan">
-        <input type="text" id="sub" placeholder="Subjek">
-        <textarea id="msg" placeholder="Pesan"></textarea>
-        <button onclick="kirim()">Kirim Sekarang</button>
-        <p id="info"></p>
+    <div class="container">
+        <h1>Send Message</h1>
+        
+        <div class="group">
+            <label>Recipient</label>
+            <input type="email" id="to" placeholder="email@address.com">
+        </div>
+
+        <div class="group">
+            <label>Subject</label>
+            <input type="text" id="sub" placeholder="Enter subject">
+        </div>
+
+        <div class="group">
+            <label>Message</label>
+            <textarea id="msg" rows="5" placeholder="Type your message here..."></textarea>
+        </div>
+
+        <button onclick="handleSend()">Send Now</button>
+        <div id="status"></div>
     </div>
 
     <script>
-        async function kirim() {
-            const info = document.getElementById('info');
-            info.innerText = "Sedang mengirim...";
+        async function handleSend() {
+            const btn = document.querySelector('button');
+            const status = document.getElementById('status');
             
-            const res = await fetch('/api/manual', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: document.getElementById('to').value,
-                    subject: document.getElementById('sub').value,
-                    message: document.getElementById('msg').value
-                })
-            });
+            if(!document.getElementById('to').value) return alert('Email required');
 
-            if(res.ok) {
-                info.innerText = "✅ Email Berhasil Terkirim!";
-            } else {
-                info.innerText = "❌ Gagal Mengirim.";
+            btn.disabled = true;
+            btn.innerText = "Sending...";
+            status.innerText = "";
+
+            try {
+                const res = await fetch('/api/manual', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: document.getElementById('to').value,
+                        subject: document.getElementById('sub').value,
+                        message: document.getElementById('msg').value
+                    })
+                });
+
+                if(res.ok) {
+                    status.style.color = "var(--primary)";
+                    status.innerText = "Email sent successfully";
+                    document.getElementById('msg').value = "";
+                } else {
+                    throw new Error();
+                }
+            } catch (e) {
+                status.style.color = "#ef4444";
+                status.innerText = "Failed to send email";
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Send Now";
             }
         }
     </script>
